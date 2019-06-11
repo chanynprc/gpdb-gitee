@@ -16,8 +16,8 @@ int main(int argc, char* argv[])
 		PIPE_READMODE_MESSAGE |   // message-read mode 
 		PIPE_WAIT,                // blocking mode 
 		1,                        // max. instances  
-		PIPEBUFF,                  // output buffer size 
-		2048, // input buffer size
+		0,                  // output buffer size 
+		0, // input buffer size
 		5000,                     // client time-out 
 		NULL);
 	if (hPipe == INVALID_HANDLE_VALUE)
@@ -38,7 +38,6 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 	printf("Write to file succeded!\n");
-	getchar();
 	DisconnectNamedPipe(hPipe);
 	CloseHandle(hPipe);
 	return 0;
