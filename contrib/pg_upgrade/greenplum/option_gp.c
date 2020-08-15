@@ -14,6 +14,7 @@ typedef struct {
 	segmentMode segment_mode;
 	checksumMode checksum_mode;
 	char *old_tablespace_file_path;
+	bool timing;
 } GreenplumUserOpts;
 
 static GreenplumUserOpts greenplum_user_opts;
@@ -69,6 +70,10 @@ process_greenplum_option(greenplumOption option)
 			greenplum_user_opts.old_tablespace_file_path = pg_strdup(optarg);
 			break;
 
+		case GREENPLUM_LOG_TIMING:
+			greenplum_user_opts.timing = true;
+			break;
+
 		default:
 			return false;
 	}
@@ -109,4 +114,10 @@ bool
 is_show_progress_mode(void)
 {
 	return greenplum_user_opts.progress;
+}
+
+bool
+is_timing_enabled(void)
+{
+	return greenplum_user_opts.timing;
 }

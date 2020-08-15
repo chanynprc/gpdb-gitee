@@ -69,6 +69,8 @@ prep_status(const char *fmt,...)
 {
 	va_list		args;
 	char		message[MAX_STRING];
+	if (is_timing_enabled())
+		INSTR_TIME_SET_CURRENT(step_timing.start_time);
 
 	va_start(args, fmt);
 	vsnprintf(message, sizeof(message), fmt, args);
@@ -172,11 +174,28 @@ pg_fatal(const char *fmt,...)
 void
 check_ok(void)
 {
-	/* all seems well */
-	report_status(PG_REPORT, "ok");
-	fflush(stdout);
+	if (is_timing_enabled())
+		check_ok_with_timing();
+	else
+	{
+		/* all seems well */
+		report_status(PG_REPORT, "ok");
+		fflush(stdout);
+	}
 }
 
+
+void
+check_ok_with_timing(void)
+{
+	char *elapsed_time = malloc(strlen("[ 00h00m00s ]") + 1);
+	INSTR_TIME_SET_CURRENT(step_timing.end_time);
+	INSTR_TIME_SUBTRACT(step_timing.end_time, step_timing.start_time);
+	duration(step_timing.end_time, elapsed_time);
+	report_status(PG_REPORT, "ok %s", elapsed_time);
+	fflush(stdout);
+	pfree(elapsed_time);
+}
 
 /*
  * quote_identifier()
