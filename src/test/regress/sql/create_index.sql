@@ -86,11 +86,13 @@ CREATE INDEX gpointind ON point_tbl USING gist (f1);
 
 CREATE TEMP TABLE gpolygon_tbl AS
     SELECT polygon(home_base) AS f1 FROM slow_emp4000;
+ANALYZE gpolygon_tbl;
 INSERT INTO gpolygon_tbl VALUES ( '(1000,0,0,1000)' );
 INSERT INTO gpolygon_tbl VALUES ( '(0,1000,1000,1000)' );
 
 CREATE TEMP TABLE gcircle_tbl AS
     SELECT circle(home_base) AS f1 FROM slow_emp4000;
+ANALYZE gcircle_tbl;
 
 CREATE INDEX ggpolygonind ON gpolygon_tbl USING gist (f1);
 
@@ -102,6 +104,7 @@ CREATE INDEX ggcircleind ON gcircle_tbl USING gist (f1);
 
 CREATE TABLE quad_point_tbl AS
     SELECT point(unique1,unique2) AS p FROM tenk1;
+ANALYZE quad_point_tbl;
 
 INSERT INTO quad_point_tbl
     SELECT '(333.0,400.0)'::point FROM generate_series(1,1000);
@@ -116,6 +119,7 @@ CREATE INDEX sp_kd_ind ON kd_point_tbl USING spgist (p kd_point_ops);
 
 CREATE TABLE radix_text_tbl AS
     SELECT name AS t FROM road WHERE name !~ '^[0-9]';
+ANALYZE radix_text_tbl;
 
 INSERT INTO radix_text_tbl
     SELECT 'P0123456789abcdef' FROM generate_series(1,1000);

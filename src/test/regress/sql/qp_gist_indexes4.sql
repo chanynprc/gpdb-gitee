@@ -556,6 +556,7 @@ INSERT INTO textSearch VALUES (4, 'orca');
 INSERT INTO textSearch VALUES (3, 'gpdb');
 INSERT INTO textSearch VALUES (4, 'gist');
 INSERT INTO textSearch VALUES (3, 'cool');
+ANALYZE textSearch;
 
 SELECT * FROM textSearch 
  WHERE t @@ to_tsquery('test'); 
