@@ -66,7 +66,7 @@ setup_gpadmin_user() {
     ubuntu*)
       /usr/sbin/useradd -G supergroup,tty gpadmin -s /bin/bash
       ;;
-    sles*)
+    sles* | photon*)
       # create a default group gpadmin, and add user gpadmin to group gapdmin, supergroup, tty
       /usr/sbin/useradd -U -G supergroup,tty gpadmin
       ;;
@@ -91,25 +91,24 @@ setup_sshd() {
   sed -ri 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
 
 
-  case "$TEST_OS" in
-    centos6 | sles*)
-      test -e /etc/ssh/ssh_host_key || ssh-keygen -f /etc/ssh/ssh_host_key -N '' -t rsa1
-      ;;
-    photon*)
-      test -e /etc/ssh/ssh_host_ecdsa_key || ssh-keygen -f /etc/ssh/ssh_host_ecdsa_key -N '' -t ecdsa
-      test -e /etc/ssh/ssh_host_ed25519_key || ssh-keygen -f /etc/ssh/ssh_host_ed25519_key -N '' -t ed25519
-      ;;
-    centos7)
-      test -e /etc/ssh/ssh_host_key || ssh-keygen -f /etc/ssh/ssh_host_key -N '' -t rsa1
-      # For Centos 7, disable looking for host key types that older Centos versions don't support.
-      sed -ri 's@^HostKey /etc/ssh/ssh_host_ecdsa_key$@#&@' /etc/ssh/sshd_config
-      sed -ri 's@^HostKey /etc/ssh/ssh_host_ed25519_key$@#&@' /etc/ssh/sshd_config
-      ;;
-  esac
+  if [ ! "$TEST_OS" = "centos*" || "$TEST_OS" = "sles*" ]; then
+    test -e /etc/ssh/ssh_host_key || ssh-keygen -f /etc/ssh/ssh_host_key -N '' -t rsa1
+  fi
+
+  if [  "$TEST_OS" = "photon*" ]; then
+    test -e /etc/ssh/ssh_host_ecdsa_key || ssh-keygen -f /etc/ssh/ssh_host_ecdsa_key -N '' -t ecdsa
+    test -e /etc/ssh/ssh_host_ed25519_key || ssh-keygen -f /etc/ssh/ssh_host_ed25519_key -N '' -t ed25519
+  fi
+
+  if [ "$TEST_OS" = "centos7" ]; then
+    # For Centos 7, disable looking for host key types that older Centos versions don't support.
+    sed -ri 's@^HostKey /etc/ssh/ssh_host_ecdsa_key$@#&@' /etc/ssh/sshd_config
+    sed -ri 's@^HostKey /etc/ssh/ssh_host_ed25519_key$@#&@' /etc/ssh/sshd_config
+  fi
 
   setup_ssh_for_user root
 
-  if [[ "$TEST_OS" == *"ubuntu"* ]]; then
+  if [ "$TEST_OS" = "ubuntu*" ]; then
     mkdir -p /var/run/sshd
     chmod 0755 /var/run/sshd
   fi
