@@ -1733,7 +1733,7 @@ jobs:
     image: gpdb6-photon3-test
     params:
       MAKE_TEST_COMMAND: -k PGOPTIONS='-c optimizer=on' installcheck-world
-      TEST_OS: centos
+      TEST_OS: photon
       CONFIGURE_FLAGS: ((configure_flags))
 
 - name: icw_planner_photon3
@@ -1755,7 +1755,7 @@ jobs:
     image: gpdb6-photon3-test
     params:
       MAKE_TEST_COMMAND: -k PGOPTIONS='-c optimizer=off' installcheck-world
-      TEST_OS: centos
+      TEST_OS: photon
       CONFIGURE_FLAGS: ((configure_flags))
 
 - name: icw_gporca_icproxy_photon3
@@ -1777,7 +1777,7 @@ jobs:
     image: gpdb6-photon3-test
     params:
       MAKE_TEST_COMMAND: -k PGOPTIONS='-c gp_interconnect_type=proxy -c optimizer=on' installcheck-world
-      TEST_OS: centos
+      TEST_OS: photon
       CONFIGURE_FLAGS: ((configure_flags))
 
 - name: icw_planner_icproxy_photon3
@@ -1799,7 +1799,7 @@ jobs:
     image: gpdb6-photon3-test
     params:
       MAKE_TEST_COMMAND: -k PGOPTIONS='-c gp_interconnect_type=proxy -c optimizer=off' installcheck-world
-      TEST_OS: centos
+      TEST_OS: photon
       CONFIGURE_FLAGS: ((configure_flags))
 
 {% endif %}
@@ -2242,7 +2242,7 @@ jobs:
     file: gpdb_src/concourse/tasks/ic_gpdb_resgroup.yml
     image: ccp-image
     params:
-      TEST_OS: photon3
+      TEST_OS: photon
     on_success:
       <<: *ccp_destroy
   ensure:
