@@ -66,7 +66,7 @@ setup_gpadmin_user() {
     ubuntu*)
       /usr/sbin/useradd -G supergroup,tty gpadmin -s /bin/bash
       ;;
-    sles* | photon*)
+    sles*)
       # create a default group gpadmin, and add user gpadmin to group gapdmin, supergroup, tty
       /usr/sbin/useradd -U -G supergroup,tty gpadmin
       ;;
