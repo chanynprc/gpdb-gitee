@@ -1907,12 +1907,11 @@ class gpload:
 
     def test_enable_custom_format(self):
         # Test custom format guc
-        self.enable_custom_format = 0;
-        #queryString = """show gpload_enable_custom_format;"""
-        #resultList = self.db.query(queryString.encode('utf-8')).getresult()
-        #val = int(resultList[0][0])
-        #if val != 0:
-        #    self.enable_custom_format = 1
+        self.enable_custom_format = 0
+        queryString = """show gpload_enable_custom_format;"""
+        resultList = self.db.query(queryString.encode('utf-8')).getresult()
+        if int(resultList[0][0]) != 0:
+            self.enable_custom_format = 1
 
     def test_custom_formatter(self):
         # Test if 'text_in' custom formatter can be used
