@@ -105,8 +105,8 @@ anchors:
         action: destroy
 
 - &ccp_gen_cluster_default_params
-  AWS_ACCESS_KEY_ID: ((tf-machine-access-key-id))
-  AWS_SECRET_ACCESS_KEY: ((tf-machine-secret-access-key))
+  AWS_ACCESS_KEY_ID: ((prod/tf-machine-access-key-id))
+  AWS_SECRET_ACCESS_KEY: ((prod/tf-machine-secret-access-key))
   AWS_DEFAULT_REGION: ((aws-region))
   BUCKET_PATH: clusters-google/
   BUCKET_NAME: ((tf-bucket-name))
@@ -129,12 +129,12 @@ anchors:
         run:
           path: 'ccp_src/google/ccp_failed_test.sh'
         params:
-          GOOGLE_CREDENTIALS: ((google-service-account-key))
+          GOOGLE_CREDENTIALS: ((prod/google-service-account-key))
           GOOGLE_PROJECT_ID: ((google-project-id))
           GOOGLE_ZONE: ((google-zone))
-          GOOGLE_SERVICE_ACCOUNT: ((google-service-account))
-          AWS_ACCESS_KEY_ID: ((tf-machine-access-key-id))
-          AWS_SECRET_ACCESS_KEY: ((tf-machine-secret-access-key))
+          GOOGLE_SERVICE_ACCOUNT: ((prod/google-service-account))
+          AWS_ACCESS_KEY_ID: ((prod/tf-machine-access-key-id))
+          AWS_SECRET_ACCESS_KEY: ((prod/tf-machine-secret-access-key))
           AWS_DEFAULT_REGION: ((tf-machine-region))
           BUCKET_PATH: clusters-google/
           BUCKET_NAME: ((tf-bucket-name))
@@ -149,12 +149,12 @@ anchors:
   run:
     path: 'ccp_src/google/ccp_failed_test.sh'
   params:
-    GOOGLE_CREDENTIALS: ((google-service-account-key))
+    GOOGLE_CREDENTIALS: ((prod/google-service-account-key))
     GOOGLE_PROJECT_ID: ((google-project-id))
     GOOGLE_ZONE: ((google-zone))
-    GOOGLE_SERVICE_ACCOUNT: ((google-service-account))
-    AWS_ACCESS_KEY_ID: ((tf-machine-access-key-id))
-    AWS_SECRET_ACCESS_KEY: ((tf-machine-secret-access-key))
+    GOOGLE_SERVICE_ACCOUNT: ((prod/google-service-account))
+    AWS_ACCESS_KEY_ID: ((prod/tf-machine-access-key-id))
+    AWS_SECRET_ACCESS_KEY: ((prod/tf-machine-secret-access-key))
     AWS_DEFAULT_REGION: ((tf-machine-region))
     BUCKET_PATH: clusters-google/
     BUCKET_NAME: ((tf-bucket-name))
@@ -163,14 +163,14 @@ anchors:
   type: terraform
   source:
     env:
-      AWS_ACCESS_KEY_ID: ((tf-machine-access-key-id))
-      AWS_SECRET_ACCESS_KEY: ((tf-machine-secret-access-key))
-      GOOGLE_CREDENTIALS: ((google-service-account-key))
+      AWS_ACCESS_KEY_ID: ((prod/tf-machine-access-key-id))
+      AWS_SECRET_ACCESS_KEY: ((prod/tf-machine-secret-access-key))
+      GOOGLE_CREDENTIALS: ((prod/google-service-account-key))
     vars:
       project_id: ((google-project-id))
     storage:
-      access_key_id: ((tf-machine-access-key-id))
-      secret_access_key: ((tf-machine-secret-access-key))
+      access_key_id: ((prod/tf-machine-access-key-id))
+      secret_access_key: ((prod/tf-machine-secret-access-key))
       region_name: ((aws-region))
       # This is not parameterized, on purpose. All tfstates will go to this spot,
       # and different teams will place there clusters' tfstate files under different paths
@@ -499,7 +499,7 @@ resources:
   type: git
   source:
     branch: ((ccp-git-branch))
-    private_key: ((ccp-git-key))
+    private_key: ((prod/ccp-git-key))
     uri: ((ccp-git-remote))
 
 {% if "centos7" in os_types or
@@ -515,10 +515,10 @@ resources:
 
 - name: terraform.d
   source:
-    access_key_id: ((bucket-access-key-id))
+    access_key_id: ((prod/ccp-terraform-provider-plugins-bucket-access-key-id))
     bucket: ccp-terraform-provider-plugins
     region_name: ((aws-region))
-    secret_access_key: ((bucket-secret-access-key))
+    secret_access_key: ((prod/ccp-terraform-provider-plugins-bucket-secret-access-key))
     versioned_file: plugin-cache.tgz
   type: s3
 
@@ -541,7 +541,7 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/icw_planner_centos7_dump/dump.sql.xz
 
 {% endif %}
@@ -550,7 +550,7 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/icw_planner_rhel8_dump/dump.sql.xz
 
 {% endif %}
@@ -586,7 +586,7 @@ resources:
     repository: gcr.io/data-gpdb-private-images/gpdb7-rhel8-build
     tag: latest
     username: _json_key
-    password: ((container-registry-readonly-service-account-key))
+    password: ((prod/data-gpdb-private-images-container-registry-readonly-service-account-key))
 
 - name: gpdb7-rhel8-test
   type: registry-image
@@ -594,7 +594,7 @@ resources:
     repository: gcr.io/data-gpdb-private-images/gpdb7-rhel8-test
     tag: latest
     username: _json_key
-    password: ((container-registry-readonly-service-account-key))
+    password: ((prod/data-gpdb-private-images-container-registry-readonly-service-account-key))
 {% endif %}
 
 {% if "ubuntu18.04" in os_types %}
@@ -617,31 +617,31 @@ resources:
 - name: bin_gpdb_centos7_icw_green
   type: s3
   source:
-    access_key_id: ((bucket-access-key-id))
+    access_key_id: ((prod/ccp-terraform-provider-plugins-bucket-access-key-id))
     bucket: ((bucket-name))
     region_name: ((aws-region))
-    secret_access_key: ((bucket-secret-access-key))
+    secret_access_key: ((prod/ccp-terraform-provider-plugins-bucket-secret-access-key))
     versioned_file: bin_gpdb_centos7/gpdb_branch_master/icw_green/bin_gpdb.tar.gz
 
 - name: bin_gpdb_centos7_rc
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: server/published/master/server-rc-(.*)-rhel7_x86_64((rc-build-type-gcs)).tar.gz
 
 - name: bin_gpdb_rhel8_rc
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: server/published/master/server-rc-(.*)-rhel8_x86_64((rc-build-type-gcs)).tar.gz
 
 - name: bin_gpdb_ubuntu18.04_rc
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: server/published/master/server-rc-(.*)-ubuntu18.04_x86_64((rc-build-type-gcs)).tar.gz
 
 
@@ -649,21 +649,21 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: clients/published/master/clients-rc-(.*)-rhel7_x86_64((rc-build-type-gcs)).tar.gz
 
 - name: bin_gpdb_clients_rhel8_rc
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: clients/published/master/clients-rc-(.*)-rhel8_x86_64((rc-build-type-gcs)).tar.gz
 
 - name: bin_gpdb_clients_ubuntu18.04_rc
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: clients/published/master/clients-rc-(.*)-ubuntu18.04_x86_64((rc-build-type-gcs)).tar.gz
 
 {% endif %}
@@ -671,7 +671,7 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
 {% if directed_release %}
     regexp: server-src/published/master/((gpdb-git-branch))-server-src-rc-*.tar.gz
 {% else %}
@@ -684,14 +684,14 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: server/published/master/greenplum-db-(.*)-rhel7-x86_64((rc-build-type-gcs)).rpm
 
 - name: gpdb_rpm_installer_rhel8
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: server/published/master/greenplum-db-(.*)-rhel8-x86_64((rc-build-type-gcs)).rpm
 
 - name: greenplum-database-release
@@ -706,7 +706,7 @@ resources:
   icon: google
   source:
     bucket: ((gcs-bucket-for-oss))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: osl/released/gpdb6/open_source_license_greenplum-database-6.0.0-97773a0-(.*).txt
 
 {% endif %}
@@ -715,14 +715,14 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_centos7/bin_gpdb.tar.gz
 
 - name: bin_gpdb_clients_centos7
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_clients_centos7/bin_gpdb_clients.tar.gz
 
 {% if pipeline_configuration == "prod" %}
@@ -730,7 +730,7 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: server/published/master/server-build-(.*)-rhel7_x86_64((rc-build-type-gcs)).tar.gz
 {% endif %}
 
@@ -740,14 +740,14 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_rhel8/bin_gpdb.tar.gz
 
 - name: bin_gpdb_clients_rhel8
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_clients_rhel8/bin_gpdb_clients.tar.gz
 
 {% if pipeline_configuration == "prod" %}
@@ -755,7 +755,7 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: server/published/master/server-build-(.*)-rhel8_x86_64((rc-build-type-gcs)).tar.gz
 {% endif %}
 
@@ -765,14 +765,14 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_ubuntu18.04/bin_gpdb.tar.gz
 
 - name: bin_gpdb_clients_ubuntu18.04
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_clients_ubuntu18.04/bin_gpdb_clients.tar.gz
 
 {% if pipeline_configuration == "prod" %}
@@ -780,7 +780,7 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     regexp: server/published/master/server-build-(.*)-ubuntu18.04_x86_64((rc-build-type-gcs)).tar.gz
 {% endif %}
 
@@ -791,7 +791,7 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_clients_windows/greenplum-clients-x86_64.tar.gz
 
 {% endif %}
@@ -813,7 +813,7 @@ resources:
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
-    json_key: ((concourse-gcs-resources-service-account-key))
+    json_key: ((prod/concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/madlib_gppkg/madlib-master-gp7-rhel7-x86_64.gppkg
 
 - name: cmake_tar
@@ -1036,7 +1036,7 @@ jobs:
       REMOTE_HOST: ((remote_win_host_build))
       REMOTE_PORT: ((remote_win_port_build))
       REMOTE_USER: ((remote_win_user_build))
-      REMOTE_KEY: ((remote_win_key_build))
+      REMOTE_KEY: ((prod/remote_win_key_build))
   - put: bin_gpdb_clients_windows
     params:
       file: "gpdb_artifacts/greenplum-clients-x86_64.tar.gz"
@@ -1788,7 +1788,7 @@ jobs:
         path: gpdb_src/concourse/scripts/gsutil_sync
         args: [ "./coverage/", "gs://((coverage-bucket-name))/((pipeline-name))/" ]
       params:
-        JSON_KEY: ((concourse-gcs-resources-service-account-key))
+        JSON_KEY: ((prod/concourse-gcs-resources-service-account-key))
       caches:
         - path: pip-cache-dir
 
@@ -1876,7 +1876,7 @@ jobs:
                 path: gpdb_src/concourse/scripts/gsutil_sync
                 args: [ "./ccp-coverage/", "gs://((coverage-bucket-name))/((pipeline-name))/" ]
               params:
-                JSON_KEY: ((concourse-gcs-resources-service-account-key))
+                JSON_KEY: ((prod/concourse-gcs-resources-service-account-key))
               caches:
                 - path: pip-cache-dir
         {% endif %}
@@ -1905,7 +1905,7 @@ jobs:
                 path: gpdb_src/concourse/scripts/gsutil_sync
                 args: [ "./demo-coverage/", "gs://((coverage-bucket-name))/((pipeline-name))/" ]
               params:
-                JSON_KEY: ((concourse-gcs-resources-service-account-key))
+                JSON_KEY: ((prod/concourse-gcs-resources-service-account-key))
               caches:
                 - path: pip-cache-dir
 
@@ -2256,7 +2256,7 @@ jobs:
           path: gpdb_src/concourse/scripts/combine_cli_coverage.bash
           args: [ "gs://((coverage-bucket-name))/((pipeline-name))/", "((coverage-bucket-name))/((pipeline-name))" ]
         params:
-          JSON_KEY: ((concourse-gcs-resources-service-account-key))
+          JSON_KEY: ((prod/concourse-gcs-resources-service-account-key))
         caches:
           - path: pip-cache-dir
 
@@ -2813,8 +2813,8 @@ jobs:
         file: gpdb_src/concourse/tasks/regression_tests_gpcloud.yml
         image: gpdb7-centos7-test
         params:
-          gpcloud_access_key_id: ((gpcloud-access-key-id))
-          gpcloud_secret_access_key: ((gpcloud-secret-access-key))
+          gpcloud_access_key_id: ((prod/gpcloud-access-key-id))
+          gpcloud_secret_access_key: ((prod/gpcloud-secret-access-key))
           TARGET_OS: centos
       - task: gpcheckcloud_tests_gpcloud_centos
         input_mapping:
@@ -2822,8 +2822,8 @@ jobs:
         file: gpdb_src/concourse/tasks/gpcheckcloud_tests_gpcloud.yml
         image: gpdb7-centos7-test
         params:
-          gpcloud_access_key_id: ((gpcloud-access-key-id))
-          gpcloud_secret_access_key: ((gpcloud-secret-access-key))
+          gpcloud_access_key_id: ((prod/gpcloud-access-key-id))
+          gpcloud_secret_access_key: ((prod/gpcloud-secret-access-key))
           TARGET_OS: centos
 {% endif %}
 {% endif %}

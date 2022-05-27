@@ -1,0 +1,29 @@
+---
+# usage: fly set-pipeline -p gpdb_master_without_asserts -l without_asserts_common_prod.yml
+aws-region: us-west-2
+bucket-name: gpdb5-concourse-builds
+tf-machine-region: us-west-2
+tf-bucket-name: gpdb5-pipeline-dynamic-terraform
+google-project-id: data-gpdb-ci
+google-zone: us-central1-a
+ccp-git-branch: master
+ccp-git-remote: git@github.com:pivotal/gp-concourse-cluster-provisioner.git
+gcs-bucket: pivotal-gpdb-concourse-resources-prod
+gcs-bucket-intermediates: pivotal-gpdb-concourse-resources-intermediates-prod
+gcs-bucket-for-oss: greenplum-database-concourse-resources-prod
+gpdb-git-branch: master
+gpdb-git-remote: https://github.com/greenplum-db/gpdb.git
+rc-build-type: prod
+rc-build-type-gcs: ""
+reduced-frequency-trigger-start: 1:00 AM
+reduced-frequency-trigger-stop: 2:00 AM
+reduced-frequency-trigger-flag: true
+gpdb_src-trigger-flag: false
+configure_flags: "--enable-tap-tests"
+configure_flags_with_extensions: "--enable-tap-tests --enable-debug-extensions"
+use_ccache: true
+remote_win_host_build: 10.0.42.5
+remote_win_user_build: buildbot
+remote_win_port_build: 22
+test-binary-swap: false
+coverage-bucket-name: pivotal-gpdb-cli-coverage-prod
