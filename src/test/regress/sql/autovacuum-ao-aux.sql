@@ -30,7 +30,13 @@ INSERT INTO autovac_ao SELECT j,j FROM generate_series(1, 10000000)j;
 -- Deleting tuples from an AO table will insert rows into its visimap table.
 -- Aborting the delete should mark these inserted rows as invisible, and hence
 -- eligible for autovacuum.
-begin; delete from autovac_ao where j % 9 = 3; abort;
+BEGIN;
+DELETE FROM autovac_ao WHERE j % 9 = 3;
+ABORT;
+
+-- give stats a chance to update.  Waiting for fault blocks the sending of stat updates, and so vacuum
+-- is never allowed to run if we race ahead to the wait.
+select count(*) from autovac_ao;
 
 -- wait for autovacuum to hit the auxiliary visimap table for autovac_ao,
 -- triggering a fault
