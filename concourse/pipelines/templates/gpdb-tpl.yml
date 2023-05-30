@@ -462,7 +462,7 @@ resources:
   type: registry-image
   source:
     repository: gcr.io/data-gpdb-private-images/gpdb7-rhel8-build
-    tag: latest
+    tag: dev
     username: _json_key
     password: ((data-gpdb-private-images-container-registry-readonly-service-account-key))
 
