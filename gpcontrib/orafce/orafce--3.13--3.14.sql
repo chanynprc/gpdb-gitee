@@ -3,6 +3,7 @@ RETURNS text
 AS 'MODULE_PATHNAME','orafce_unistr'
 LANGUAGE 'c';
 
+/*
 do $$
 BEGIN
   IF EXISTS(SELECT * FROM pg_settings WHERE name = 'server_version_num' AND setting::int >= 120000) THEN
@@ -32,3 +33,4 @@ BEGIN
   END IF;
 END
 $$;
+*/
