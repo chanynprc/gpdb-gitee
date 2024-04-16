@@ -1,0 +1,59 @@
+{
+  "database": {
+    "deploymentType": "mirrorless",
+    "admin": {
+      "name": "gpadmin",
+      "password": "asdfqwsfd"
+    },
+    "segmentsPerSegmentHost": 3
+  },
+  "artifact": {
+    "greenplum": "/tpm/rpms/gpdb.rpm",
+    "dependencyList": [
+      "/tpm/rpms/rpm-1.rpm",
+      "/tpm/rpms/rpm-2.rpm"
+    ]
+  },
+  "infra": {
+    "requestPort": 5001,
+    "publishPort": 5002,
+    "coordinatorHost": {
+      "ip": "10.202.89.77",
+      "hostname": "cdw",
+      "domainName": "example.com",
+      "authentication": {
+        "type": "password",
+        "password": "dssdfwef"
+      }
+    },
+    "standbyHost": {
+      "ip": "10.202.89.76",
+      "hostname": "custom-name",
+      "domainName": "example.com",
+      "authentication": {
+        "type": "password",
+        "password": "dssdfwef"
+      }
+    },
+    "segmentHost": {
+      "segmentHostsCount": 10,
+      "network": {
+        "internalCidr": "192.168.100.1/24",
+        "ipRange": {
+          "first": "192.168.100.1",
+          "last": "192.168.100.25"
+        },
+        "ipList": [
+          "192.168.100.1",
+          "192.168.100.2"
+        ]
+      },
+      "authentication": {
+        "type": "password",
+        "password": "asdfasdf"
+      },
+      "hostnamePrefix": "custom",
+      "domainName": "example.com"
+    }
+  }
+}

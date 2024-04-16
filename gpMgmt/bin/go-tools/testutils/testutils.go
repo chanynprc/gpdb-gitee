@@ -219,3 +219,13 @@ func getMockDBConn(t *testing.T, utility bool, errs ...error) (*dbconn.DBConn, s
 
 	return connection, mock
 }
+
+func Assert(t *testing.T, expected any, actual any, log string) {
+	if expected != actual {
+		if len(strings.TrimSpace(log)) > 0 {
+			t.Fatalf("Expected %v, got %v , %s", expected, actual, log)
+		} else {
+			t.Fatalf("Expected %v, got %v", expected, actual)
+		}
+	}
+}
