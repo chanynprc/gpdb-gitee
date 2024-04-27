@@ -30,6 +30,11 @@
 #include "storage/checksum.h"
 #include "storage/checksum_impl.h"
 
+#include "fe_utils/frontend_hook.h"
+#include "fe_utils/pg_checksums_hook.h"
+
+pg_checksums_hook_after_read_type pg_checksums_hook_after_read = NULL;
+pg_checksums_hook_before_write_type pg_checksums_hook_before_write = NULL;
 
 static int64 files = 0;
 static int64 blocks = 0;
@@ -214,6 +219,9 @@ scan_file(const char *fn, BlockNumber segmentno)
 		uint16		csum;
 		int			r = read(f, buf.data, BLCKSZ);
 
+		if (pg_checksums_hook_after_read)
+			pg_checksums_hook_after_read(fn, blockno*BLCKSZ, buf.data);
+
 		if (r == 0)
 			break;
 		if (r != BLCKSZ)
@@ -264,6 +272,10 @@ scan_file(const char *fn, BlockNumber segmentno)
 				pg_log_error("seek failed for block %u in file \"%s\": %m", blockno, fn);
 				exit(1);
 			}
+
+
+			if (pg_checksums_hook_before_write)
+				pg_checksums_hook_before_write(fn, blockno*BLCKSZ, buf.data);
 
 			/* Write block with checksum */
 			w = write(f, buf.data, BLCKSZ);
@@ -513,6 +525,7 @@ main(int argc, char *argv[])
 				break;
 			case 'D':
 				DataDir = optarg;
+				strlcpy(FrontendHookPgDataPath, optarg, MAXPGPATH);
 				break;
 			case 'P':
 				showprogress = true;
@@ -522,6 +535,8 @@ main(int argc, char *argv[])
 				exit(1);
 		}
 	}
+
+	frontend_load_librarpies(argc, (const char**)argv);
 
 	if (DataDir == NULL)
 	{
@@ -537,6 +552,8 @@ main(int argc, char *argv[])
 			fprintf(stderr, _("Try \"%s --help\" for more information.\n"), progname);
 			exit(1);
 		}
+
+		strlcpy(FrontendHookPgDataPath, DataDir, MAXPGPATH);
 	}
 
 	/* Complain if any arguments remain */
