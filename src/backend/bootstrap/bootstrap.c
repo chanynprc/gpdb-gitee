@@ -455,6 +455,7 @@ AuxiliaryProcessMain(int argc, char *argv[])
 			SetProcessingMode(BootstrapProcessing);
 			bootstrap_signals();
 			BootStrapXLOG();
+			load_tde_if_requested(true);
 			BootstrapModeMain();
 			proc_exit(1);		/* should never return */
 

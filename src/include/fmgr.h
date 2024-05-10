@@ -743,6 +743,7 @@ extern void **find_rendezvous_variable(const char *varName);
 extern Size EstimateLibraryStateSpace(void);
 extern void SerializeLibraryState(Size maxsize, char *start_address);
 extern void RestoreLibraryState(char *start_address);
+extern void load_tde_if_requested(bool bootstrap);
 
 /*
  * Support for aggregate functions

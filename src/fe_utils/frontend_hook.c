@@ -149,7 +149,7 @@ static void pg_find_env_path(int argc, const char *argv[]) {
 	}
 }
 
-void frontend_load_librarpies(int argc, const char *argv[]) {
+void frontend_load_libraries(int argc, const char *argv[]) {
 	char path[MAXPGPATH] = {};
 	const char *procname = get_progname(argv[0]);
 
@@ -158,9 +158,9 @@ void frontend_load_librarpies(int argc, const char *argv[]) {
 	{
 		// try to load TDE. see comment in src/backend/utils/init/postinit.c
 		struct stat st;
-		const char tde_lib_file[] = "gp_data_encryption";
+		const char tde_lib_file[] = "pg_data_encryption";
 
-		const char *tde_kms_uri = getenv("GP_DATA_ENCRYPTION_KMS_URI");
+		const char *tde_kms_uri = getenv("PG_DATA_ENCRYPTION_KMS_URI");
 		int tde_kms_uri_not_empty = tde_kms_uri && (strlen(tde_kms_uri) != 0);
 		snprintf(path, MAXPGPATH, "%s/data_encryption.key", FrontendHookPgDataPath);
 		int key_file_exists = stat("data_encryption.key", &st) == 0 || errno != ENOENT;

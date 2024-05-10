@@ -4891,6 +4891,16 @@ PostgresMain(int argc, char *argv[],
 	/* Early initialization */
 	BaseInit();
 
+	if (!IsUnderPostmaster)
+	{
+		/*
+		 * For standalone Postgres processes, the TDE library handle will
+		 * not be populated from the postmaster. We shall load it manually.
+		 */
+		Assert(GetProcessingMode() != BootstrapProcessing);
+		load_tde_if_requested(false);
+	}
+
 	/*
 	 * Create a per-backend PGPROC struct in shared memory, except in the
 	 * EXEC_BACKEND case where this was done in SubPostmasterMain. We must do

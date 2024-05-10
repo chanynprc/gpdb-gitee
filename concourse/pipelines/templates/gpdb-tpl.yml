@@ -1046,8 +1046,8 @@ jobs:
     image: gpdb7-[[ os_type ]]-test
     timeout: 24h
     params:
-      GP_DATA_ENCRYPTION_KMS_URI: "123"
-      MAKE_CLUSTER_PRERUN_SHELL_COMMAND: mv /usr/local/greenplum-db-devel/lib/postgresql/data_encryption.so /usr/local/greenplum-db-devel/lib/postgresql/gp_data_encryption.so; mkdir -p /usr/local/greenplum-db-devel/etc/environment.d/; echo 'export GP_DATA_ENCRYPTION_KMS_URI=123' > /usr/local/greenplum-db-devel/etc/environment.d/00-gp_data_encryption.conf
+      PG_DATA_ENCRYPTION_KMS_URI: "123"
+      MAKE_CLUSTER_PRERUN_SHELL_COMMAND: mv /usr/local/greenplum-db-devel/lib/postgresql/data_encryption.so /usr/local/greenplum-db-devel/lib/postgresql/pg_data_encryption.so; mkdir -p /usr/local/greenplum-db-devel/etc/environment.d/; echo 'export PG_DATA_ENCRYPTION_KMS_URI=123' > /usr/local/greenplum-db-devel/etc/environment.d/00-gp_data_encryption.conf
       MAKE_TEST_PRERUN_SHELL_COMMAND: |
         # ao_checksum_corruption will read AO table directly
         # log_directory will use pg_basebackup with is not supported for now

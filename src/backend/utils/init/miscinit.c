@@ -1692,6 +1692,7 @@ process_shared_preload_libraries(void)
 				   "shared_preload_libraries",
 				   false);
 
+	load_tde_if_requested(false);
 	process_shared_preload_libraries_in_progress = false;
 }
 

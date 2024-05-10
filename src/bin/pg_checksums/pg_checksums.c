@@ -536,7 +536,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-	frontend_load_librarpies(argc, (const char**)argv);
+	frontend_load_libraries(argc, (const char**)argv);
 
 	if (DataDir == NULL)
 	{

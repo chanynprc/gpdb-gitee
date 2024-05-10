@@ -811,3 +811,71 @@ RestoreLibraryState(char *start_address)
 		start_address += strlen(start_address) + 1;
 	}
 }
+
+
+/*
+ * Load the pg_data_encryption extension if requested.
+ * We also perform some checks here.
+ */
+void
+load_tde_if_requested(bool bootstrap)
+{
+	static bool tde_has_been_loaded = false;
+	const char *tde_kms_uri = getenv("PG_DATA_ENCRYPTION_KMS_URI");
+	bool tde_kms_uri_empty = !tde_kms_uri || !tde_kms_uri[0];
+
+	if (tde_has_been_loaded)
+		return;
+
+	if (bootstrap)
+	{
+		/*
+		 * When we're in the bootstrap mode, if the environment variable
+		 * PG_DATA_ENCRYPTION_KMS_URI is set, we will load the extension and
+		 * the TDE itself will generate data_encryption.key.
+		 */
+		if (!tde_kms_uri_empty)
+		{
+			process_shared_preload_libraries_in_progress = true;
+			load_file("pg_data_encryption.so", false);
+			process_shared_preload_libraries_in_progress = false;
+			tde_has_been_loaded = true;
+		}
+	}
+	else
+	{
+		/*
+		 * When we're not in the bootstrap mode, we will load the TDE if
+		 * data_encryption.key exists.
+		 */
+		char path[MAXPGPATH];
+		struct stat st;
+		bool key_file_exists;
+
+		snprintf(path, sizeof(path), "%s/data_encryption.key", DataDir);
+		key_file_exists = stat(path, &st) == 0 || errno != ENOENT;
+		errno = 0;
+
+		/*
+		 * If the key file doesn't exist, we don't need to load the TDE.
+		 */
+		if (!key_file_exists)
+			return;
+
+		/*
+		 * We should also check if the environment variable is missing.
+		 */
+		if (tde_kms_uri_empty)
+		{
+			ereport(ERROR,
+					(errcode(ERRCODE_INTERNAL_ERROR),
+					 errmsg("The database is encrypted but the environment variable `PG_DATA_ENCRYPTION_KMS_URI` is missing")));
+		}
+
+		process_shared_preload_libraries_in_progress = true;
+		load_file("pg_data_encryption.so", false);
+		process_shared_preload_libraries_in_progress = false;
+		tde_has_been_loaded = true;
+	}
+}
+
